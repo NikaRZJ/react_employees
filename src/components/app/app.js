@@ -3,30 +3,76 @@ import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
 import EployeesList from '../employees-list/employees-list';
 import EployeesAddForm from '../employees-add-form/employees-add-form';
-
 import './app.css';
+import { Component } from 'react';
+import nextId from '/node_modules/react-id-generator/lib/index.js';
 
-function App() {
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                { name: 'John C.', salary: 800, increase: true, id: nextId() },
+                { name: 'Alex M.', salary: 3000, increase: false, id: nextId() },
+                { name: 'Carl W.', salary: 15000, increase: true, id: nextId() },
+            ]
+        }
 
-    const data = [
-        { name: 'John C.', salary: 800, increase: true, id: 1 },
-        { name: 'Alex M.', salary: 3000, increase: false, id: 2 },
-        { name: 'Carl W.', salary: 15000, increase: true, id: 3 },
-    ];
+    }
 
-    return (
-        <div className="app">
-            <AppInfo />
+    deleteItem = (id) => {
+        this.setState(({ data }) => {
+            // const index = data.findIndex(elem => elem.id === id);
 
-            <div className="search-panel">
-                <SearchPanel />
-                <AppFilter />
+            const newArr = data.filter(item => item.id !== id);
+
+            // const before = data.slice(0, index);
+            // const after = data.slice(index + 1);
+            // const newArr = [...before, ...after];
+
+            return {
+                data: newArr
+            }
+        })
+    }
+
+    addItem = (name, salary) => {
+        const newObj = {
+            name: name,
+            salary: salary,
+            increase: false,
+            id: nextId()
+        }
+        console.log(newObj.id);
+        // console.log(name, salary);
+        this.setState(({ data }) => {
+            const newArr = [...data, newObj];
+            return {
+                data: newArr
+            }
+        })
+    }
+
+    render() {
+        // console.log(this.state.data);
+        return (
+            <div className="app">
+                <AppInfo />
+
+                <div className="search-panel">
+                    <SearchPanel />
+                    <AppFilter />
+                </div>
+
+                <EployeesList
+                    data={this.state.data}
+                    onDelete={this.deleteItem}
+                />
+                <EployeesAddForm onAdd={this.addItem} />
             </div>
+        );
+    }
 
-            <EployeesList data={data} />
-            <EployeesAddForm />
-        </div>
-    );
 }
 
 export default App;
